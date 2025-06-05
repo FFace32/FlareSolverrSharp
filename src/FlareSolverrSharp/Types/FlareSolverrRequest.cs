@@ -18,5 +18,8 @@ namespace FlareSolverrSharp.Types
 
         [JsonProperty("cookies")]
         public Cookie[] Cookies;
+
+        [JsonProperty("userAgent")]
+        public string UserAgent;
     }
 }

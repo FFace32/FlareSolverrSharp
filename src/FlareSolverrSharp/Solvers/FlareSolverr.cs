@@ -32,9 +32,10 @@ namespace FlareSolverrSharp.Solvers
             _flareSolverrUri = new Uri(apiUrl + "v1");
         }
 
-        public async Task<FlareSolverrResponse> Solve(HttpRequestMessage request, string sessionId = "", Types.Cookie[] cookies = null)
+        public async Task<FlareSolverrResponse> Solve(HttpRequestMessage request, string sessionId = "", Types.Cookie[] cookies = null,
+            string userAgent = "")
         {
-            return await SendFlareSolverrRequest(GenerateFlareSolverrRequest(request, sessionId, cookies));
+            return await SendFlareSolverrRequest(GenerateFlareSolverrRequest(request, sessionId, cookies, userAgent));
         }
 
         public async Task<FlareSolverrResponse> CreateSession()
@@ -192,11 +193,14 @@ namespace FlareSolverrSharp.Solvers
             return content;
         }
 
-        private HttpContent GenerateFlareSolverrRequest(HttpRequestMessage request, string sessionId = "", Types.Cookie[] cookies = null)
+        private HttpContent GenerateFlareSolverrRequest(HttpRequestMessage request, string sessionId = "", Types.Cookie[] cookies = null,
+            string userAgent = "")
         {
             FlareSolverrRequest req;
             if (string.IsNullOrWhiteSpace(sessionId))
                 sessionId = null;
+            if (string.IsNullOrWhiteSpace(userAgent))
+                userAgent = null;
 
             var url = request.RequestUri.ToString();
 
@@ -211,7 +215,8 @@ namespace FlareSolverrSharp.Solvers
                     MaxTimeout = MaxTimeout,
                     Proxy = proxy,
                     Session = sessionId,
-                    Cookies = cookies
+                    Cookies = cookies,
+                    UserAgent = userAgent
                 };
             }
             else if (request.Method == HttpMethod.Post)
@@ -228,7 +233,8 @@ namespace FlareSolverrSharp.Solvers
                         MaxTimeout = MaxTimeout,
                         Proxy = proxy,
                         Session = sessionId,
-                        Cookies = cookies
+                        Cookies = cookies,
+                        UserAgent = userAgent
                     };
                 }
                 else if (contentMediaType.Contains("multipart/form-data")
